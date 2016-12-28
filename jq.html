@@ -10,44 +10,73 @@
 <style type="text/css">
 	
 </style>
-<script src="js/jquery-1.7.2.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-	$(function(){
-		$.ajax({
-			type:"get",
-			url:"js/city1.json",
-			async:true,
-			success:function(res){
-				for (var i=0; i<res.length;i++) {
-					var oP=document.createElement("option");
-					oP.innerHTML=res[i].name;
-					$('#shen').append(oP);
-				}
-			}
-		});
-		$('#shen').on('change',function(){
-			$('#shi').html("<option>请选择城市</option>");
-			$('#xian').html("<option>请选择区域</option>");
-			
-			var x=$('#shen').val();
+</head>
+<body>
+	<select id="shen"><option>请选择省份</option></select>
+	<select id="shi"><option>请选择城市</option></select>
+	<select id="xian"><option>请选择区域</option></select>
+
+	<script src="js/jquery-1.7.2.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function(){
 			$.ajax({
 				type:"get",
 				url:"js/city1.json",
 				async:true,
 				success:function(res){
-//					var cityData=res[x].city;
-					console.log(res);
-					
+					var res = JSON.parse(res);
+					console.log(res)
+					for (var i=0; i<res.length;i++) {
+						var oP=document.createElement("option");
+						oP.value =i;
+						oP.innerHTML=res[i].name;
+						$('#shen').append(oP);
+					}
 				}
 			});
-		});
-		
-	})
-</script>
-</head>
-<body>
-	<select value="" id="shen"><option>请选择省份</option></select>
-	<select value="" id="shi"><option>请选择城市</option></select>
-	<select value="" id="xian"><option>请选择区域</option></select>
+			$('#shen').change(function(){
+					$('#shi').html("<option>请选择城市</option>");
+					$('#xian').html("<option>请选择区域</option>");
+					
+					var x=$(this).val();
+					$.ajax({
+						type:"get",
+						url:"js/city1.json",
+						async:true,
+						success:function(res){
+							var res = JSON.parse(res);
+							var cityData=res[x].city;
+							for(var i=0;i<cityData.length;i++){
+								var oP=document.createElement("option");
+								oP.value=i;
+								oP.innerHTML =cityData[i].name;
+								$("#shi").append(oP);
+							}
+						}
+					});
+			});
+			$('#shi').change(function(){
+					var x=$("#shen").val();
+					var y = $(this).val();
+					$.ajax({
+						type:"get",
+						url:"js/city1.json",
+						async:true,
+						success:function(res){
+							var res = JSON.parse(res);
+							var areaData=res[x].city[y].area;
+							console.log(areaData);
+							for(var i = 0;i<areaData.length;i++){
+								var oOption=document.createElement("option");
+								oOption.innerHTML=areaData[i];
+								$("#xian").append(oOption);
+							}						
+						}
+					});
+			});
+
+		})
+	</script>
+
 </body>
 </html>
